@@ -6,6 +6,7 @@ from pyadinic.core import (
     Airfoil,
     ThinAirfoilState,
     PanelState,
+    PolarState,
 )
 import numpy as np
 import pytest
@@ -102,3 +103,24 @@ def test_panel_state_dataclass():
     assert np.array_equal(state.cp, cp)
     assert state.gamma == pytest.approx(0.117)
     assert np.array_equal(state.sigma, sigma)
+
+
+def test_polar_state_dataclass():
+    alpha = np.array([0.0, 0.05, 0.1])
+    cl = np.array([0.0, 0.5, 1.0])
+    cd = np.array([0.0, 0.001, 0.003])
+    cm_c4 = np.array([0.0, -0.02, -0.04])
+
+    polar = PolarState(alpha=alpha, cl=cl, cd=cd, cm_c4=cm_c4)
+
+    assert np.array_equal(polar.alpha, alpha)
+    assert np.array_equal(polar.cl, cl)
+    assert np.array_equal(polar.cd, cd)
+    assert np.array_equal(polar.cm_c4, cm_c4)
+
+    # Test unpacking via __iter__
+    a, l, d, m = polar
+    assert np.array_equal(a, alpha)
+    assert np.array_equal(l, cl)
+    assert np.array_equal(d, cd)
+    assert np.array_equal(m, cm_c4)

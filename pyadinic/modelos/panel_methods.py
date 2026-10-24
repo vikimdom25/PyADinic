@@ -45,7 +45,8 @@ Press, 2001. Capítulos 10–11.
 import math
 import numpy as np
 
-from pyadinic.core.dataclass import Airfoil, PanelState
+import warnings
+from pyadinic.core.dataclass import Airfoil, PanelState, PolarState
 from pyadinic.numerical_methods.linear_systems import lu_solve
 from .naca_airfoils import naca4 as _naca4, naca5 as _naca5
 
@@ -398,29 +399,53 @@ def panel_forces(cp, xc, yc, nx, ny, length, alpha_rad):
 # 6. Análisis completo
 # ---------------------------------------------------------------------------
 
-def panel_analysis(airfoil, alpha, deg=False, n_panels=None):
+def _resolve_airfoil(airfoil, n_points=100):
+    if isinstance(airfoil, Airfoil):
+        return airfoil
+    if isinstance(airfoil, str):
+        code = airfoil.strip()
+        base_code = code.split("-")[0]
+        if len(base_code) == 4:
+            return _naca4(code, n_points=n_points)
+        elif len(base_code) == 5:
+            return _naca5(code, n_points=n_points)
+        else:
+            raise ValueError(f"NACA code '{code}' must have 4 or 5 digits")
+    raise TypeError("airfoil must be an Airfoil instance or NACA code string")
+
+
+def panel_analysis(airfoil, alpha, deg=False, n_panels=None, n_points=100):
     """
     Análisis aerodinámico completo de un perfil mediante el método de paneles 2D.
 
     Parámetros
     ----------
-    airfoil : Airfoil
-        Perfil aerodinámico (de naca4, naca5 o similar).
+    airfoil : Airfoil or str
+        Perfil aerodinámico (instancia de Airfoil) o código NACA de 4 o 5 dígitos.
     alpha : float
         Ángulo de ataque en radianes (o grados si deg=True).
     deg : bool, optional
         Si True, alpha se interpreta en grados. Por defecto False.
     n_panels : int or None, optional
-        No utilizado en esta versión (la discretización es la del Airfoil
-        recibido: usa n_points en naca4/naca5). Reservado para compatibilidad.
+        Parámetro obsoleto (deprecated). La discretización está dada por el Airfoil
+        o por n_points al pasar código NACA. Emite DeprecationWarning si no es None.
+    n_points : int, optional
+        Número de puntos de discretización si se pasa código NACA. Por defecto 100.
 
     Retorna
     -------
     PanelState
         Objeto con todos los resultados del análisis.
     """
-    if not isinstance(airfoil, Airfoil):
-        raise TypeError("airfoil must be an Airfoil instance")
+    if n_panels is not None:
+        warnings.warn(
+            "The 'n_panels' parameter is deprecated and has no effect. "
+            "Use n_points or pass a pre-discretized Airfoil instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+    airfoil_obj = _resolve_airfoil(airfoil, n_points=n_points)
 
     if isinstance(alpha, bool) or not isinstance(alpha, (int, float)):
         raise TypeError("alpha must be numeric")
@@ -430,7 +455,7 @@ def panel_analysis(airfoil, alpha, deg=False, n_panels=None):
 
     alpha_rad = math.radians(alpha) if deg else float(alpha)
 
-    xp, yp = panel_geometry(airfoil)
+    xp, yp = panel_geometry(airfoil_obj)
 
     n = len(xp) - 1
     if n < 4:
@@ -463,36 +488,35 @@ def panel_analysis(airfoil, alpha, deg=False, n_panels=None):
     )
 
 
-def panel_polar(airfoil, alpha_list, deg=False):
+def panel_polar(airfoil, alpha_list, deg=False, n_points=100):
     """
     Calcula la polar aerodinámica (Cl, Cd, Cm) para una lista de ángulos de ataque.
 
     Parámetros
     ----------
-    airfoil : Airfoil
-        Perfil aerodinámico.
+    airfoil : Airfoil or str
+        Perfil aerodinámico (instancia de Airfoil) o código NACA de 4 o 5 dígitos.
     alpha_list : list or array-like of float
         Lista de ángulos de ataque.
     deg : bool, optional
         Si True, los ángulos se interpretan en grados. Por defecto False.
+    n_points : int, optional
+        Número de puntos de discretización si se pasa código NACA. Por defecto 100.
 
     Retorna
     -------
-    alphas : ndarray
-        Ángulos de ataque en radianes.
-    cls : ndarray
-        Coeficientes de sustentación Cl(alpha).
-    cds : ndarray
-        Coeficientes de resistencia Cd(alpha) (≈0 en flujo potencial).
-    cms : ndarray
-        Coeficientes de momento en c/4.
+    PolarState
+        Dataclass con campos alpha, cl, cd, cm_c4 como ndarray, desempaquetable
+        como (alpha, cl, cd, cm_c4) por compatibilidad.
     """
-    if not isinstance(airfoil, Airfoil):
-        raise TypeError("airfoil must be an Airfoil instance")
+    airfoil_obj = _resolve_airfoil(airfoil, n_points=n_points)
 
     try:
         alpha_arr = np.asarray(alpha_list, dtype=float)
     except (TypeError, ValueError):
+        raise TypeError("alpha_list must be a list or array of numeric values")
+
+    if any(isinstance(v, (bool, np.bool_)) for v in (alpha_list if not isinstance(alpha_list, np.ndarray) else alpha_list.flat)):
         raise TypeError("alpha_list must be a list or array of numeric values")
 
     if alpha_arr.ndim != 1 or len(alpha_arr) < 1:
@@ -507,12 +531,17 @@ def panel_polar(airfoil, alpha_list, deg=False):
     cms = np.zeros(len(alphas_rad))
 
     for k, a in enumerate(alphas_rad):
-        state = panel_analysis(airfoil, a, deg=False)
+        state = panel_analysis(airfoil_obj, a, deg=False)
         cls[k] = state.cl
         cds[k] = state.cd
         cms[k] = state.cm_c4
 
-    return alphas_rad, cls, cds, cms
+    return PolarState(
+        alpha=alphas_rad,
+        cl=cls,
+        cd=cds,
+        cm_c4=cms,
+    )
 
 
 # ---------------------------------------------------------------------------

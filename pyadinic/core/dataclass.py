@@ -121,3 +121,29 @@ class PanelState:
     cp: np.ndarray
     gamma: float
     sigma: np.ndarray
+
+
+
+@dataclass
+class PolarState:
+    """
+    Resultados de la polar aerodinamica calculada con el metodo de paneles.
+
+    Atributos
+    ---------
+    alpha : np.ndarray
+        Angulos de ataque en radianes.
+    cl : np.ndarray
+        Coeficientes de sustentacion Cl(alpha).
+    cd : np.ndarray
+        Coeficientes de resistencia al avance Cd(alpha).
+    cm_c4 : np.ndarray
+        Coeficientes de momento de cabeceo respecto al cuarto de cuerda Cm_c4(alpha).
+    """
+    alpha: np.ndarray
+    cl: np.ndarray
+    cd: np.ndarray
+    cm_c4: np.ndarray
+
+    def __iter__(self):
+        return iter((self.alpha, self.cl, self.cd, self.cm_c4))

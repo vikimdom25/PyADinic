@@ -2,7 +2,7 @@ import math
 import numpy as np
 import pytest
 
-from pyadinic.core.dataclass import Airfoil, PanelState
+from pyadinic.core.dataclass import Airfoil, PanelState, PolarState
 from pyadinic.modelos.naca_airfoils import naca4, naca5
 from pyadinic.modelos.thin_airfoil import thin_airfoil_naca4
 from pyadinic.modelos.panel_methods import (
@@ -267,7 +267,7 @@ class TestPanelAnalysis:
 
     def test_invalid_airfoil(self):
         with pytest.raises(TypeError):
-            panel_analysis("2412", 0.0)
+            panel_analysis(12345, 0.0)
 
     @pytest.mark.parametrize("alpha", ["5", None, [1], True])
     def test_invalid_alpha(self, alpha):
@@ -309,6 +309,8 @@ class TestPanelPolar:
     def test_invalid_inputs(self):
         af = naca4("0012", n_points=40)
         with pytest.raises(TypeError):
+            panel_polar(12345, [0.0])
+        with pytest.raises(ValueError):
             panel_polar("x", [0.0])
         with pytest.raises(TypeError):
             panel_polar(af, ["a", "b"])
@@ -337,3 +339,37 @@ class TestPanelPressure:
         _, _, _, _, _, _, tx, ty, _ = influence_matrix(xp, yp, 0.2)
         _, vt = panel_pressure(np.zeros(n), 0.0, xp, yp, 0.2, tx, ty)
         assert np.allclose(vt, math.cos(0.2) * tx + math.sin(0.2) * ty)
+
+
+class TestPanelMethodsA3Enhancements:
+    def test_panel_analysis_accepts_naca_string(self):
+        # 4-digit code
+        s4 = panel_analysis("2412", alpha=4.0, deg=True, n_points=60)
+        s4_af = panel_analysis(naca4("2412", n_points=60), alpha=4.0, deg=True)
+        assert s4.cl == pytest.approx(s4_af.cl, abs=1e-10)
+
+        # 5-digit code
+        s5 = panel_analysis("23015", alpha=2.0, deg=True, n_points=60)
+        s5_af = panel_analysis(naca5("23015", n_points=60), alpha=2.0, deg=True)
+        assert s5.cl == pytest.approx(s5_af.cl, abs=1e-10)
+
+    def test_panel_analysis_deprecation_warning_for_n_panels(self):
+        with pytest.deprecated_call():
+            panel_analysis("0012", alpha=0.0, n_panels=50)
+
+    def test_panel_polar_accepts_naca_string_and_returns_polar_state(self):
+        polar = panel_polar("2412", [0.0, 2.0, 4.0], deg=True, n_points=50)
+        assert isinstance(polar, PolarState)
+        assert len(polar.alpha) == 3
+        assert len(polar.cl) == 3
+
+        # Unpacking backwards compatibility
+        al, cl, cd, cm = panel_polar("2412", [0.0, 2.0, 4.0], deg=True, n_points=50)
+        assert np.array_equal(al, polar.alpha)
+        assert np.array_equal(cl, polar.cl)
+        assert np.array_equal(cd, polar.cd)
+        assert np.array_equal(cm, polar.cm_c4)
+
+    def test_invalid_naca_code_length(self):
+        with pytest.raises(ValueError, match="must have 4 or 5 digits"):
+            panel_analysis("012", alpha=0.0)

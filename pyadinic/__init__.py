@@ -28,6 +28,7 @@ from .core.dataclass import (
     Airfoil,
     ThinAirfoilState,
     PanelState,
+    PolarState,
 )
 from .core.essential_magnitudes import (
     dynamic_pressure,
@@ -213,6 +214,7 @@ __all__ = [
     "Airfoil",
     "ThinAirfoilState",
     "PanelState",
+    "PolarState",
     # Core
     "dynamic_pressure",
     "mach_number",

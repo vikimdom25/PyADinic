@@ -75,6 +75,7 @@ from .thin_airfoil import (
     thin_airfoil_naca5,
 )
 from .panel_methods import (
+    PolarState,
     panel_geometry,
     influence_matrix,
     panel_solve,
@@ -161,6 +162,7 @@ __all__ = [
     "thin_airfoil_naca4",
     "thin_airfoil_naca5",
     # Panel Methods
+    "PolarState",
     "panel_geometry",
     "influence_matrix",
     "panel_solve",

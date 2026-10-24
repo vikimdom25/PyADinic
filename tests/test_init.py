@@ -90,6 +90,7 @@ def test_top_level_exports():
     # Thin Airfoil Theory
     assert hasattr(pad, "ThinAirfoilState")
     assert hasattr(pad, "PanelState")
+    assert hasattr(pad, "PolarState")
     assert callable(pad.thin_airfoil_theory)
     assert callable(pad.thin_airfoil_naca4)
     assert callable(pad.thin_airfoil_naca5)
