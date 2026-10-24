@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyadinic"
-version = "0.2.0"
-description = "A Python library for aerodynamics, compressible gas dynamics, atmospheric models, and numerical methods."
+version = "0.3.0"
+description = "A Python library for aerodynamics, compressible gas dynamics, atmospheric models, wing geometry, airfoil theory, and numerical methods."
 readme = "README.md"
 requires-python = ">=3.9"
 authors = [
     { name = "Santiago" }
 ]
-keywords = ["aerodynamics", "gas-dynamics", "isentropic-flow", "isa-atmosphere", "numerical-methods"]
+keywords = ["aerodynamics", "gas-dynamics", "isentropic-flow", "isa-atmosphere", "numerical-methods", "airfoil", "panel-methods", "wing-geometry"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",

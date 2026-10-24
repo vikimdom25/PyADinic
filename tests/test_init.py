@@ -2,7 +2,7 @@ import pyadinic as pad
 
 def test_top_level_exports():
     assert hasattr(pad, "__version__")
-    assert pad.__version__ == "0.2.0"
+    assert pad.__version__ == "0.3.0"
     
     # Atmospheric & Core
     assert callable(pad.isa_model)
