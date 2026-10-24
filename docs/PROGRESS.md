@@ -5,7 +5,7 @@
 - [x] A2: Vectorización de interpolación en `numerical_methods/interpolation.py`
 - [x] A3: Firmas flexibles en `panel_methods.py`, dataclass `PolarState` y DeprecationWarning para `n_panels`
 - [x] A4: Helper `monotone_surface` en `modelos/naca_airfoils.py`
-- [ ] A5: Migración de `mision_pyadinic.py` a `tests/test_integracion_mision.py`
+- [x] A5: Migración de `mision_pyadinic.py` a `tests/test_integracion_mision.py`
 - [ ] A6: Documentación en `README.md`, versión `0.3.0` en `pyproject.toml`, `CHANGELOG.md` y actualización de `__version__`
 
 ## Parte B: Huecos Funcionales
