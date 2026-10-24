@@ -28,9 +28,16 @@ def euler(function, t_span, y0, h):
     t_values = [t]
     y_values = [y.copy()]
 
-    while t < tf:
+    tol = min(h * 1e-5, 1e-12 * max(1.0, abs(tf), abs(t0)))
 
-        step = min(h, tf - t)
+    while t < tf - tol:
+
+        if tf - t <= h + tol:
+            step = tf - t
+            next_t = tf
+        else:
+            step = h
+            next_t = t + h
 
         dydt = np.asarray(function(t, y), dtype=float)
 
@@ -40,7 +47,7 @@ def euler(function, t_span, y0, h):
             )
 
         y = y + (step * dydt)
-        t = t + step
+        t = next_t
 
         t_values.append(t)
         y_values.append(y.copy())
@@ -75,34 +82,41 @@ def heun(function, t_span, y0, h):
     t_values = [t]
     y_values = [y.copy()]
 
-    while t < tf:
-    
-        step = min(h, tf - t)
-    
+    tol = min(h * 1e-5, 1e-12 * max(1.0, abs(tf), abs(t0)))
+
+    while t < tf - tol:
+
+        if tf - t <= h + tol:
+            step = tf - t
+            next_t = tf
+        else:
+            step = h
+            next_t = t + h
+
         k1 = np.asarray(function(t, y), dtype=float)
-    
+
         if k1.shape != y.shape:
             raise ValueError(
                 "Function output must have the same shape as y0"
             )
-    
-        y_star = y + (step * k1)
-        t = t + step 
 
-        k2 = np.asarray(function(t, y_star), dtype=float)
+        y_star = y + (step * k1)
+
+        k2 = np.asarray(function(t + step, y_star), dtype=float)
 
         if k2.shape != y.shape:
             raise ValueError(
-            "Function output must have the same shape as y0"
+                "Function output must have the same shape as y0"
             )
 
-        y = y + ((step/2)*(k1 + k2))
-    
+        y = y + ((step / 2) * (k1 + k2))
+        t = next_t
+
         t_values.append(t)
         y_values.append(y.copy())
-    
 
     return np.array(t_values), np.array(y_values)
+
 
 def rk4(function, t_span, y0, h):
 
@@ -131,9 +145,16 @@ def rk4(function, t_span, y0, h):
     t_values = [t]
     y_values = [y.copy()]
 
-    while t < tf:
+    tol = min(h * 1e-5, 1e-12 * max(1.0, abs(tf), abs(t0)))
 
-        step = min(h, tf - t)
+    while t < tf - tol:
+
+        if tf - t <= h + tol:
+            step = tf - t
+            next_t = tf
+        else:
+            step = h
+            next_t = t + h
 
         k1 = np.asarray(
             function(t, y),
@@ -185,7 +206,7 @@ def rk4(function, t_span, y0, h):
             k1 + 2 * k2 + 2 * k3 + k4
         )
 
-        t = t + step
+        t = next_t
 
         t_values.append(t)
         y_values.append(y.copy())

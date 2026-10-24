@@ -425,3 +425,28 @@ def test_rk4_incompatible_state():
             0.1
         )
 
+
+
+@pytest.mark.parametrize("method", [euler, heun, rk4])
+@pytest.mark.parametrize("h", [0.1, 0.3, 0.25])
+def test_ode_endpoint_and_strict_monotonicity(method, h):
+    tf = 1.0
+    t, y = method(lambda t, y: -y, (0.0, tf), 1.0, h)
+
+    # El ultimo t == tf exacto
+    assert t[-1] == tf
+
+    # Sin repetidos y t estrictamente creciente
+    dt = np.diff(t)
+    assert np.all(dt > 0.0)
+
+    # La solucion coincide con exp(-t) dentro de la tolerancia esperada
+    y_exact = np.exp(-t)
+    if method == rk4:
+        tol = 1e-4
+    elif method == heun:
+        tol = 0.05
+    else:
+        tol = 0.15
+
+    assert np.all(np.abs(y - y_exact) < tol)
