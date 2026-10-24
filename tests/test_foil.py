@@ -645,4 +645,73 @@ def test_naca5_regular_spacing():
     airfoil = naca5("23012", n_points=25, spacing_type="regular")
 
     assert len(airfoil.x_upper) == 25
-    assert airfoil.name == "NACA 23012"
+    assert airfoil.name == "NACA 23012"
+
+
+
+# ============================================================
+# monotone_surface
+# ============================================================
+
+from pyadinic.modelos.naca_airfoils import monotone_surface
+from pyadinic.numerical_methods.interpolation import cubic_spline_interpolation
+
+
+class TestMonotoneSurface:
+    def test_naca_23015_upper_surface(self):
+        af = naca5("23015", n_points=100)
+        # Verifica que la superficie original tiene no monotonicidad en LE
+        assert np.min(np.diff(af.x_upper)) < 0.0
+
+        # Aplica monotone_surface
+        xm, ym = monotone_surface(af.x_upper, af.y_upper)
+
+        # Debe ser estrictamente creciente
+        assert len(xm) > 2
+        assert len(xm) == len(ym)
+        assert np.all(np.diff(xm) > 0.0)
+
+        # Permite realizar una interpolacion spline sin errores
+        y_interp = cubic_spline_interpolation(0.5, xm, ym)
+        assert isinstance(y_interp, float)
+
+    def test_naca_4412_upper_surface(self):
+        af = naca4("4412", n_points=100)
+        # Verifica que la superficie original no es estrictamente creciente
+        assert np.min(np.diff(af.x_upper)) < 0.0
+
+        # Aplica monotone_surface
+        xm, ym = monotone_surface(af.x_upper, af.y_upper)
+
+        # Debe ser estrictamente creciente
+        assert len(xm) > 2
+        assert len(xm) == len(ym)
+        assert np.all(np.diff(xm) > 0.0)
+
+        # Permite realizar una interpolacion spline sin errores
+        y_interp = cubic_spline_interpolation(0.3, xm, ym)
+        assert isinstance(y_interp, float)
+
+    def test_discards_duplicates_within_tolerance(self):
+        x = [0.0, 0.1, 0.1 + 1e-10, 0.2, 0.3]
+        y = [0.0, 1.0, 1.5, 2.0, 3.0]
+        xm, ym = monotone_surface(x, y, tol=1e-9)
+        assert len(xm) == 4
+        assert np.all(np.diff(xm) > 0.0)
+
+    def test_sorting_unsorted_arrays(self):
+        x = [0.5, 0.1, 0.9, 0.3]
+        y = [5.0, 1.0, 9.0, 3.0]
+        xm, ym = monotone_surface(x, y)
+        assert np.all(xm == [0.1, 0.3, 0.5, 0.9])
+        assert np.all(ym == [1.0, 3.0, 5.0, 9.0])
+
+    def test_invalid_inputs(self):
+        with pytest.raises(TypeError):
+            monotone_surface([0.1, True], [0.0, 1.0])
+        with pytest.raises(TypeError):
+            monotone_surface(["a", "b"], [0.0, 1.0])
+        with pytest.raises(ValueError):
+            monotone_surface([0.1], [0.1])
+        with pytest.raises(ValueError):
+            monotone_surface([0.1, 0.2], [0.1])

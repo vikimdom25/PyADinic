@@ -53,6 +53,7 @@ def test_top_level_exports():
     assert callable(pad.camber_line)
     assert callable(pad.surface_coordinates)
     assert callable(pad.spacing)
+    assert callable(pad.monotone_surface)
 
     # Models & Airspeeds
     assert callable(pad.sutherland_model_air)

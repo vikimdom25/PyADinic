@@ -425,3 +425,62 @@ def naca5(code, chord=1.0, n_points=100, spacing_type="cosine"):
         y_lower=np.array(y_lower) * chord,
     )
 
+
+
+
+def monotone_surface(x, y, tol=1e-9):
+    """
+    Ordena las coordenadas de una superficie (x, y) de modo que x sea
+    estrictamente creciente, descartando puntos duplicados o con separacion
+    en x menor o igual a la tolerancia especificada.
+
+    Parametros
+    ----------
+    x : array-like
+        Coordenadas x de la superficie.
+    y : array-like
+        Coordenadas y de la superficie.
+    tol : float, optional
+        Tolerancia minima de separacion entre puntos consecutivos en x.
+        Por defecto 1e-9.
+
+    Retorna
+    -------
+    x_mono : ndarray
+        Coordenadas x ordenadas y estrictamente crecientes.
+    y_mono : ndarray
+        Coordenadas y correspondientes a los puntos filtrados.
+    """
+    if isinstance(x, (bool, np.bool_)) or isinstance(y, (bool, np.bool_)):
+        raise TypeError("x and y must be numeric arrays, not booleans")
+
+    if any(isinstance(v, (bool, np.bool_)) for v in (x if not isinstance(x, np.ndarray) else x.flat)):
+        raise TypeError("x must contain numeric values, not booleans")
+    if any(isinstance(v, (bool, np.bool_)) for v in (y if not isinstance(y, np.ndarray) else y.flat)):
+        raise TypeError("y must contain numeric values, not booleans")
+
+    try:
+        x_arr = np.asarray(x, dtype=float)
+        y_arr = np.asarray(y, dtype=float)
+    except (TypeError, ValueError):
+        raise TypeError("x and y must be convertible to numeric arrays")
+
+    if x_arr.ndim != 1 or y_arr.ndim != 1:
+        raise ValueError("x and y must be 1D arrays")
+
+    if len(x_arr) != len(y_arr):
+        raise ValueError("x and y must have the same length")
+
+    if len(x_arr) < 2:
+        raise ValueError("At least two points are required")
+
+    order = np.argsort(x_arr, kind="mergesort")
+    x_sorted = x_arr[order]
+    y_sorted = y_arr[order]
+
+    keep = [0]
+    for i in range(1, len(x_sorted)):
+        if x_sorted[i] > x_sorted[keep[-1]] + tol:
+            keep.append(i)
+
+    return np.asarray(x_sorted[keep]), np.asarray(y_sorted[keep])

@@ -122,6 +122,7 @@ from .modelos.naca_airfoils import (
     camber_line_5,
     camber_line_slope_5,
     naca5,
+    monotone_surface,
 )
 from .modelos.thin_airfoil import (
     fourier_coefficients,
@@ -299,6 +300,7 @@ __all__ = [
     "camber_line_5",
     "camber_line_slope_5",
     "naca5",
+    "monotone_surface",
     # Thin Airfoil Theory
     "fourier_coefficients",
     "thin_airfoil_alpha_0",
