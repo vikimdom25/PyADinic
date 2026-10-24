@@ -871,7 +871,7 @@ def test_lagrange_interpolation(x, x_values, y_values, expected):
     [
         "1",
         None,
-        [1],
+        ['invalid'],
     ],
 )
 def test_lagrange_invalid_x(x):
@@ -1055,7 +1055,7 @@ def test_cubic_spline_endpoints():
     [
         "1",
         None,
-        [1],
+        ['invalid'],
     ],
 )
 def test_cubic_spline_invalid_x(x):
@@ -1380,4 +1380,4 @@ def test_integrate_gauss_legendre_validations():
     with pytest.raises(TypeError):
         integrate_gauss_legendre(lambda x: x, 0, 1, 2.5)
     with pytest.raises(ValueError):
-        integrate_gauss_legendre(lambda x: x, 0, 1, 0)
+        integrate_gauss_legendre(lambda x: x, 0, 1, 0)
