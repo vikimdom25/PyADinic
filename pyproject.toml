@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyadinic"
+version = "0.2.0"
+description = "A Python library for aerodynamics, compressible gas dynamics, atmospheric models, and numerical methods."
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+    { name = "Santiago" }
+]
+keywords = ["aerodynamics", "gas-dynamics", "isentropic-flow", "isa-atmosphere", "numerical-methods"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "numpy>=1.20",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pyadinic*"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q"
+pythonpath = ["."]
+testpaths = ["tests"]
