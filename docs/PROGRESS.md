@@ -9,6 +9,6 @@
 - [x] A6: Documentación en `README.md`, versión `0.3.0` en `pyproject.toml`, `CHANGELOG.md` y actualización de `__version__`
 
 ## Parte B: Huecos Funcionales
-- [ ] B1: Atmósfera con desviación `delta_T` y `density_altitude` en `atmosferas/ISA.py`
+- [x] B1: Atmósfera con desviación `delta_T` y `density_altitude` en `atmosferas/ISA.py`
 - [ ] B2: Perfiles NACA modificados (`-ab`), `thickness_func`, `airfoil_from_coordinates` y `airfoil_from_selig` en `modelos/naca_airfoils.py`
 - [ ] B3: Geometría de ala `Wing` en `core/dataclass.py` y `modelos/wing.py`

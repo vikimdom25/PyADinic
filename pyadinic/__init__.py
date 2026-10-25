@@ -53,7 +53,7 @@ from .core.essential_magnitudes import (
 )
 
 # Atmospheres
-from .atmosferas.ISA import isa_model
+from .atmosferas.ISA import isa_model, density_altitude
 
 # Physical Models (Isentropic flow, Sutherland viscosity, Airspeeds)
 from .modelos.sutherland import (
@@ -238,6 +238,7 @@ __all__ = [
     "boundary_layer_thickness",
     # Atmosphere
     "isa_model",
+    "density_altitude",
     # Sutherland
     "sutherland_model_air",
     "sutherland_model_generic",

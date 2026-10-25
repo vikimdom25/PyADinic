@@ -25,10 +25,11 @@ def assert_chk(a, b, tol, name=""):
 class TestAtmosferaMision:
     @pytest.mark.parametrize("dT", [0.0, 20.0])
     def test_atmosfera_condiciones(self, dT):
+        isa_cond = pad.isa_model(h_geo, delta_T=dT)
+        T = isa_cond.temperature
+        rho = isa_cond.density
+        a = isa_cond.speed_of_sound
         isa = pad.isa_model(h_geo)
-        T = isa.temperature + dT
-        rho = isa.pressure / (pad.R * T)
-        a = pad.speed_of_sound(T)
         mu = pad.sutherland_model_air(T)
         q = pad.dynamic_pressure(rho, TAS)
         M = pad.tas_to_mach(TAS, a)
@@ -116,9 +117,9 @@ class TestPolarPanelVsThinAirfoilMision:
 class TestCruceroY3DMision:
     @pytest.mark.parametrize("dT", [0.0, 20.0])
     def test_equilibrio_crucero(self, dT):
-        isa = pad.isa_model(h_geo)
-        T = isa.temperature + dT
-        rho = isa.pressure / (pad.R * T)
+        isa_cond = pad.isa_model(h_geo, delta_T=dT)
+        T = isa_cond.temperature
+        rho = isa_cond.density
         q = pad.dynamic_pressure(rho, TAS)
         CL = pad.lift_coefficient(W, q, S)
         L = pad.lift_force(CL, q, S)

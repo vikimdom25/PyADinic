@@ -6,6 +6,7 @@ def test_top_level_exports():
     
     # Atmospheric & Core
     assert callable(pad.isa_model)
+    assert callable(pad.density_altitude)
     assert callable(pad.dynamic_pressure)
     assert callable(pad.mach_number)
     assert callable(pad.reynolds_number)
