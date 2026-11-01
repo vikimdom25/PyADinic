@@ -8,6 +8,7 @@ from .dataclass import (
     ThinAirfoilState,
     PanelState,
     PolarState,
+    Wing,
 )
 from .essential_magnitudes import (
     dynamic_pressure,
@@ -41,6 +42,7 @@ __all__ = [
     "ThinAirfoilState",
     "PanelState",
     "PolarState",
+    "Wing",
     "dynamic_pressure",
     "mach_number",
     "reynolds_number",

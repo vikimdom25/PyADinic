@@ -147,3 +147,37 @@ class PolarState:
 
     def __iter__(self):
         return iter((self.alpha, self.cl, self.cd, self.cm_c4))
+
+
+@dataclass(frozen=True)
+class Wing:
+    """
+    Geometría 3D de una superficie alar trapezoidal.
+
+    Atributos
+    ---------
+    span : float
+        Envergadura total del ala b en metros [m].
+    root_chord : float
+        Cuerda en la raíz c_r en metros [m].
+    tip_chord : float
+        Cuerda en la punta c_t en metros [m].
+    area : float
+        Superficie alar de referencia S en metros cuadrados [m²].
+    aspect_ratio : float
+        Alargamiento o relación de aspecto AR = b² / S.
+    taper_ratio : float
+        Estrechamiento o relación de conicidad lambda = c_t / c_r.
+    mac : float
+        Cuerda media aerodinámica (Mean Aerodynamic Chord, MAC) en metros [m].
+    sweep_c4 : float
+        Ángulo de flecha en la línea de cuarto de cuerda (c/4) en radianes [rad].
+    """
+    span: float
+    root_chord: float
+    tip_chord: float
+    area: float
+    aspect_ratio: float
+    taper_ratio: float
+    mac: float
+    sweep_c4: float = 0.0
