@@ -62,6 +62,9 @@ from .naca_airfoils import (
     camber_line_slope_5,
     naca5,
     monotone_surface,
+    thickness_distribution_modified,
+    airfoil_from_coordinates,
+    airfoil_from_selig,
 )
 from .thin_airfoil import (
     fourier_coefficients,
@@ -74,6 +77,13 @@ from .thin_airfoil import (
     thin_airfoil_theory,
     thin_airfoil_naca4,
     thin_airfoil_naca5,
+)
+from .wing import (
+    Wing,
+    trapezoidal_wing,
+    wing_from_area_ar,
+    chord_at,
+    wing_loading,
 )
 from .panel_methods import (
     PolarState,
@@ -152,6 +162,9 @@ __all__ = [
     "camber_line_slope_5",
     "naca5",
     "monotone_surface",
+    "thickness_distribution_modified",
+    "airfoil_from_coordinates",
+    "airfoil_from_selig",
     # Thin Airfoil Theory
     "fourier_coefficients",
     "thin_airfoil_alpha_0",
@@ -174,4 +187,10 @@ __all__ = [
     "panel_polar",
     "panel_naca4",
     "panel_naca5",
+    # Wing 3D
+    "Wing",
+    "trapezoidal_wing",
+    "wing_from_area_ar",
+    "chord_at",
+    "wing_loading",
 ]

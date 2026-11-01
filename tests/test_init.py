@@ -44,6 +44,7 @@ def test_top_level_exports():
     assert hasattr(pad, "ObliqueShockState")
     assert hasattr(pad, "PrandtlMeyerState")
     assert hasattr(pad, "Airfoil")
+    assert hasattr(pad, "Wing")
 
     # Models & Airfoils
     assert callable(pad.naca4)
@@ -55,6 +56,15 @@ def test_top_level_exports():
     assert callable(pad.surface_coordinates)
     assert callable(pad.spacing)
     assert callable(pad.monotone_surface)
+    assert callable(pad.thickness_distribution_modified)
+    assert callable(pad.airfoil_from_coordinates)
+    assert callable(pad.airfoil_from_selig)
+
+    # Wing 3D
+    assert callable(pad.trapezoidal_wing)
+    assert callable(pad.wing_from_area_ar)
+    assert callable(pad.chord_at)
+    assert callable(pad.wing_loading)
 
     # Models & Airspeeds
     assert callable(pad.sutherland_model_air)

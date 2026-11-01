@@ -2,7 +2,7 @@
 
 Todas las modificaciones notables a PyADinic están documentadas en este archivo.
 
-## [0.3.0] - 2026-10-24
+## [0.3.0] - 2026-11-01
 
 ### Añadido
 - **Atmósfera ISA con desviación térmica:**
@@ -14,6 +14,7 @@ Todas las modificaciones notables a PyADinic están documentadas en este archivo
   - Generación de perfiles a partir de coordenadas arbitrarias con `airfoil_from_coordinates(name, x, y)`.
   - Carga y normalización de perfiles en formato Selig .dat con `airfoil_from_selig(source)`.
   - Helper `monotone_surface(x, y)` para garantizar coordenadas x estrictamente crecientes descartando duplicados cerca del borde de ataque.
+  - Soporte de perfiles NACA modificados en la teoría de perfiles delgados (`thin_airfoil_theory`, `thin_airfoil_naca4`, `thin_airfoil_naca5`).
 - **Geometría alar 3D:**
   - Dataclass `Wing` (inmutable).
   - Generación de geometría trapezoidal `trapezoidal_wing(span, root_chord, tip_chord, sweep_c4=0.0, deg=True)`.
@@ -21,9 +22,11 @@ Todas las modificaciones notables a PyADinic están documentadas en este archivo
   - Cálculo de cuerda local `chord_at(wing, y)` y carga alar `wing_loading(weight, wing)`.
 - **Paneles y Polares:**
   - Dataclass `PolarState` retornada por `panel_polar`, compatible con desempaquetado de tupla `(alpha, cl, cd, cm_c4)`.
-  - `panel_analysis` y `panel_polar` ahora aceptan códigos NACA directamente como cadenas (`str`) de 4 o 5 dígitos.
-- **Pruebas de integración:**
+  - `panel_analysis` y `panel_polar` ahora aceptan códigos NACA directamente como cadenas (`str`) de 4 o 5 dígitos, incluyendo perfiles modificados.
+- **Pruebas y Validación:**
   - Suite de integración completa `test_integracion_mision.py` cubriendo atmósfera, aerodinámica 2D/3D, compresión y planeo con RK4.
+  - Suite de pruebas unitarias para perfiles avanzados y formato Selig en `tests/test_foil.py`.
+  - Suite de pruebas unitarias para geometría alar 3D en `tests/test_wing.py`.
 
 ### Modificado
 - **Métodos numéricos de EDO:**
