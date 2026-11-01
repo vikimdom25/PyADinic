@@ -28,11 +28,12 @@ def _resolve_slope_function(slope_func=None, naca=None):
 
         code = naca.strip().upper().replace("NACA", "").strip()
 
-        if len(code) == 4:
-            m, p, _ = parse_naca4(code)
+        base_code = code.split('-')[0]
+        if len(base_code) == 4:
+            m, p, _ = parse_naca4(base_code)
             return lambda x: camber_line_slope(x, m, p)
-        elif len(code) == 5:
-            _, _, third, _, r, k1, k2_ratio = parse_naca5(code)
+        elif len(base_code) == 5:
+            _, _, third, _, r, k1, k2_ratio = parse_naca5(base_code)
             reflex = third == 1
             return lambda x: camber_line_slope_5(x, r, k1, reflex=reflex, k2_ratio=k2_ratio)
         else:
